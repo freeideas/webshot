@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyInstaller
+*.manifest
+*.spec
+dist/
+build/
+
+# Conda
+.conda/
+.miniconda3/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+*.png
+*.jpg
+*.jpeg
+!test.png
+!test_output.png
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
