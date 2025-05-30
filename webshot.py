@@ -24,15 +24,27 @@ def main():
     
     logger.debug(f"Starting webshot with arguments: {sys.argv}")
     
-    if len(sys.argv) != 4:
-        print("Usage: webshot [URL] [output-file] [WIDTHxHEIGHT]")
+    if len(sys.argv) < 4:
+        print("Usage: webshot [URL] [output-file] [WIDTHxHEIGHT] [--delay MILLISECONDS]")
         print("Example: webshot http://example.com example.png 1280x720")
+        print("Example: webshot http://example.com example.png 1280x720 --delay 5000")
         logger.error("Invalid number of arguments provided")
         sys.exit(1)
     
     url = sys.argv[1]
     output_path = sys.argv[2]
     dimensions = sys.argv[3]
+    
+    # Parse optional delay parameter
+    delay_ms = 0
+    if len(sys.argv) > 4:
+        if sys.argv[4] == "--delay" and len(sys.argv) > 5:
+            try:
+                delay_ms = int(sys.argv[5])
+                logger.debug(f"Delay specified: {delay_ms}ms")
+            except ValueError:
+                print(f"Error: Invalid delay value '{sys.argv[5]}'. Must be a number in milliseconds.")
+                sys.exit(1)
     
     logger.debug(f"URL: {url}")
     logger.debug(f"Output path: {output_path}")
@@ -74,7 +86,12 @@ def main():
             print(f"Loading {url}...")
             logger.info(f"Navigating to URL: {url}")
             page.goto(url, wait_until='networkidle')
-            logger.debug("Page loaded successfully")
+            logger.debug("Page loaded successfully, network is idle")
+            
+            if delay_ms > 0:
+                print(f"Waiting {delay_ms}ms after network idle...")
+                logger.debug(f"Applying delay of {delay_ms}ms after network idle")
+                page.wait_for_timeout(delay_ms)
             
             print(f"Capturing screenshot to {output_path}...")
             logger.info(f"Taking screenshot to: {output_path}")
