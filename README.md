@@ -8,6 +8,9 @@ Renders web pages to image files via CLI. Produces standalone executables for Wi
 - Headless browser operation
 - Custom viewport sizing (e.g., `1024x768`)
 - Full-page captures
+- Console log capture (JavaScript console.log, console.error, etc.)
+- Smart defaults with auto-generated filenames
+- Modern command-line interface with optional arguments
 
 ## Requirements
 - Python 3.11+
@@ -55,24 +58,70 @@ build.bat
 ```
 
 ### Output
-- Windows: `dist/webshot.exe` (≈80MB)
-- Linux: `dist/webshot` (≈85MB) 
-- macOS: `dist/webshot` (≈88MB)
+- Windows: `dist/webshot.exe` (≈56MB)
+- Linux: `dist/webshot` (≈56MB) 
+- macOS: `dist/webshot` (≈56MB)
 
 Includes embedded Chromium - no additional browser installations required.
 
 ## Usage
+
 ```bash
-webshot [URL] [output-file] [WIDTHxHEIGHT]
+webshot <URL> [options]
 ```
 
-### Examples
-```bash
-# Capture example.com as a 1280x720 PNG
-./dist/webshot http://example.com example.png 1280x720
+### Command-line Options
 
-# Capture a full-page screenshot
-./dist/webshot https://github.com github.png 1920x1080
+- `URL` - The web page to capture (required)
+- `--output, -o` - Output image file (default: auto-generated from URL)
+- `--size, -s` - Screenshot dimensions as WIDTHxHEIGHT (default: 1280x720)
+- `--format, -f` - Output format: png, jpg, jpeg (default: png)
+- `--delay, -d` - Delay in milliseconds after page load (default: 0)
+- `--console-log, -c` - Capture console logs to text file
+- `--console-output` - Custom console log filename
+- `--help, -h` - Show help message
+
+### Basic Examples
+
+```bash
+# Minimal usage - auto-generates filename
+./dist/webshot https://example.com
+
+# Custom output filename and size
+./dist/webshot https://example.com --output screenshot.png --size 1920x1080
+
+# Capture with console logging
+./dist/webshot https://github.com --console-log
+
+# Custom format and delay
+./dist/webshot https://example.com --format jpg --delay 2000
+```
+
+### Advanced Examples
+
+```bash
+# Full control with all options
+./dist/webshot https://example.com \
+  --output custom_name.png \
+  --size 1600x900 \
+  --format png \
+  --delay 1000 \
+  --console-output logs.txt
+
+# Console logging with auto-generated filenames
+./dist/webshot https://github.com --console-log
+# Creates: github_com.png and github_com_console.txt
+```
+
+### Console Logging
+
+When `--console-log` is used, WebShot captures all JavaScript console output (console.log, console.error, console.warn, etc.) and saves it to a text file. The console log file is automatically named based on the screenshot filename, or you can specify a custom name with `--console-output`.
+
+Example console log format:
+```
+[2024-01-01 12:00:00.123] LOG: Page loaded successfully
+[2024-01-01 12:00:00.456] ERROR: Failed to load resource
+[2024-01-01 12:00:00.789] WARN: Deprecated API usage
 ```
 
 ## Development
@@ -80,7 +129,7 @@ webshot [URL] [output-file] [WIDTHxHEIGHT]
 ### Running from source
 ```bash
 conda activate webshot
-python webshot.py http://example.com test.png 1280x720
+python webshot.py https://example.com --output test.png --size 1280x720
 ```
 
 ### Project Structure
